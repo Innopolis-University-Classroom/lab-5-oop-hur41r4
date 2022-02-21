@@ -23,14 +23,28 @@ private:
     int aptNumber;  // tenant’s apartment number
     // other tenant information (phone, etc.) could go here
 public:
-    tenant(string n, int aNo);
+    tenant(string n, int aNo) {
+        name = n;
+        aptNumber = aNo;
+    }
     ~tenant();
-    int getAptNumber();
+
     // needed for use in ‘set’
-    friend bool operator < (const tenant&, const tenant&);
-    friend bool operator == (const tenant&, const tenant&);
+    friend bool operator < (const tenant&, const tenant&) {
+        if (tenant->name < tenant->name && tenant->aptNumber < tenant->aptNumber);
+    }
+    friend bool operator == (const tenant&, const tenant&){
+        if (tenant->name == tenant->name && tenant->aptNumber == tenant->aptNumber);
+    }
     // for I/O
     friend ostream& operator << (ostream&, const tenant&);
+
+    int getAptNumber() {
+        return aptNumber;
+    }
+    string getTenantName() {
+        return name;
+    }
 };  // end class tenant
 ///////////////////////class compareTenants/////////////////////
 class compareTenants  //function object --  compares tenants
@@ -47,9 +61,22 @@ private:
     set<tenant*, compareTenants>::iterator iter;
 public:
     ~tenantList();               // destructor (deletes tenants)
-    void insertTenant(tenant*);  // put tenant on list
-    int getAptNo(string);        // return apartment number
-    void display();              // display tenant list
+    void insertTenant(tenant* tnt) {
+        setPtrsTens.insert(tnt);
+    }  // put tenant on list
+    int getAptNo(string name) {
+        for (auto x : setPtrsTens){
+            if (x->getTenantName() == name){
+                return x->getAptNumber();
+            }
+        }
+        return -1;
+    }        // return apartment number
+    void display() {
+        for (auto it : setPtrsTens) {
+            cout << it->getAptNumber() << "\n";
+        }
+    }            // display tenant list
 };  // end class tenantList
 /////////////////////class tenantInputScreen////////////////////
 class tenantInputScreen
@@ -61,7 +88,12 @@ private:
 public:
     tenantInputScreen(tenantList* ptrTL) : ptrTenantList(ptrTL)
     { /* empty */ }
-    void getTenant();
+    void getTenant() {
+        cin >> tName;
+        cin >> aptNo;
+        tenant * newTenant = new tenant(tName, aptNo);
+        ptrTenantList->insertTenant(newTenant);
+    }
 };  //end class tenantInputScreen
 //////////////////////////class rentRow/////////////////////////
 // one row of the rent record: an address and 12 rent amounts
